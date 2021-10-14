@@ -70,7 +70,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <sys/io.h>
+//#include <sys/io.h>
 #include <fcntl.h>
 #include <sys/time.h>
 #include <stdlib.h>

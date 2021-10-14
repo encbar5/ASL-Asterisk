@@ -552,7 +552,7 @@ ASTERISK_FILE_VERSION(__FILE__,"$Revision$")
 #include <sys/time.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
-#include <sys/io.h>
+//#include <sys/io.h>
 #include <sys/vfs.h>
 #include <math.h>
 #include <netinet/in.h>
@@ -10006,13 +10006,14 @@ treataslocal:
 		}
 		else if(!strcmp(myrpt->remoterig, remote_rig_rbi)||!strcmp(myrpt->remoterig, remote_rig_ppp16))
 		{
-			if (ioperm(myrpt->p.iobase,1,1) == -1)
-			{
+			//if (ioperm(myrpt->p.iobase,1,1) == -1)
+			//{
 				rpt_mutex_unlock(&myrpt->lock);
+		                ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 				ast_log(LOG_WARNING, "Cant get io permission on IO port %x hex\n",myrpt->p.iobase);
 				res = -1;
-			}
-			else res = setrbi(myrpt);
+			//}
+			//else res = setrbi(myrpt);
 		}
 		else if(!strcmp(myrpt->remoterig, remote_rig_kenwood))
 		{
@@ -19301,10 +19302,11 @@ char tmpstr[512],lstr[MAXLINKLIST],lat[100],lon[100],elev[100];
 		usleep(100000);
 		rpt_mutex_lock(&myrpt->lock);
 	}	
-	if ((!strcmp(myrpt->remoterig, remote_rig_rbi)) &&
-	  (ioperm(myrpt->p.iobase,1,1) == -1))
+	if ((!strcmp(myrpt->remoterig, remote_rig_rbi)) /*&&
+	  (ioperm(myrpt->p.iobase,1,1) == -1)*/)
 	{
 		rpt_mutex_unlock(&myrpt->lock);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 		ast_log(LOG_WARNING, "Cant get io permission on IO port %x hex\n",myrpt->p.iobase);
 		myrpt->rpt_thread = AST_PTHREADT_STOP;
 		pthread_exit(NULL);
@@ -23610,10 +23612,11 @@ static int rpt_exec(struct ast_channel *chan, void *data)
 		}
 	}
 
-	if ( (!strcmp(myrpt->remoterig, remote_rig_rbi)||!strcmp(myrpt->remoterig, remote_rig_ppp16)) &&
-	  (ioperm(myrpt->p.iobase,1,1) == -1))
+	if ( (!strcmp(myrpt->remoterig, remote_rig_rbi)||!strcmp(myrpt->remoterig, remote_rig_ppp16)) /*&&
+	  (ioperm(myrpt->p.iobase,1,1) == -1)*/)
 	{
 		rpt_mutex_unlock(&myrpt->lock);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 		ast_log(LOG_WARNING, "Can't get io permission on IO port %x hex\n",myrpt->p.iobase);
 		return -1;
 	}

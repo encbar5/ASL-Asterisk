@@ -52,7 +52,7 @@ ASTERISK_FILE_VERSION(__FILE__,"$Revision$")
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/io.h>
+//#include <sys/io.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <sys/time.h>
@@ -874,7 +874,8 @@ unsigned char c;
 	}
 	if (haspp == 2) /* if its a direct I/O */
 	{
-		c = inb(pbase + 1);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
+		//c = inb(pbase + 1);
 	}
 	return(c);
 }
@@ -890,7 +891,8 @@ static void ppwrite(unsigned char c)
 	}
 	if (haspp == 2) /* if its a direct I/O */
 	{
-		outb(c,pbase);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
+		//outb(c,pbase);
 	}
 	return;
 }
@@ -1449,7 +1451,8 @@ static void *pulserthread(void *arg)
 struct	timeval now,then;
 int	i,j,k;
 
-	if (haspp == 2) ioperm(pbase,2,1);
+	if (haspp == 2) //ioperm(pbase,2,1);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 	stoppulser = 0;
 	pp_lastmask = 0;
 	ast_mutex_lock(&pp_lock);
@@ -1506,7 +1509,8 @@ static void *hidthread(void *arg)
         usb_dev = NULL;
         usb_handle = NULL;
 
-	if (haspp == 2) ioperm(pbase,2,1);
+	if (haspp == 2) //ioperm(pbase,2,1);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
         while(!o->stophid)
         {
                 time(&o->lasthidtime);
@@ -2414,7 +2418,8 @@ static int usbradio_text(struct ast_channel *c, const char *text)
 	char cnt,rxs[16],txs[16],txpl[16],rxpl[16];
 	char pwr,*cmd;
 
-	if (haspp == 2) ioperm(pbase,2,1);
+	if (haspp == 2) //ioperm(pbase,2,1);
+		ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 
 	cmd = alloca(strlen(text) + 10);
 
@@ -5851,20 +5856,21 @@ static int load_module(void)
 			ppfd = open(pport,O_RDWR);
 			if (ppfd != -1)
 			{
-				if (ioctl(ppfd, PPCLAIM))
-				{
+				//if (ioctl(ppfd, PPCLAIM))
+				//{
 					ast_log(LOG_ERROR,"Unable to claim printer port %s, disabling pp support\n",pport);
 					close(ppfd);
 					haspp = 0;
-				}
+				//}
 			} 
 			else
 			{
-				if (ioperm(pbase,2,1) == -1)
-				{
+				//if (ioperm(pbase,2,1) == -1)
+				//{
+					ast_log(LOG_ERROR,"sys/io.h call not supported: %s:%d\n",__FILE__,__LINE__);
 					ast_log(LOG_ERROR,"Cant get io permission on IO port %04x hex, disabling pp support\n",pbase);
 					haspp = 0;
-				}
+				//}
 				haspp = 2;
 				if (option_verbose > 2) ast_verbose(VERBOSE_PREFIX_3 "Using direct IO port for pp support, since parport driver not available.\n");
 			}
